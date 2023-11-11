@@ -12,8 +12,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +47,8 @@ import java.lang.Math;
 
 
 
-public class VehiculoRentalSystem {
+public class VehiculoRentalSystem extends JFrame{
+	private static final long serialVersionUID = 1L;
 	public List<Vehiculo> cars;
     public List<Reserva> reservas;
     private HashMap<String, Categoria> categorias;
@@ -1094,55 +1118,77 @@ public class VehiculoRentalSystem {
      * Muestra el menú principal del sistema y maneja las interacciones iniciales.
      */
     public void mostrarMenu() {
-		Scanner scanner = new Scanner(System.in);
-		boolean continuar = true;
-		while (continuar) {
-			System.out.println("===== Menú de Inicio =====");
-	        System.out.println("1. Soy Cliente");
-	        System.out.println("2. Soy Administrador");
-	        System.out.println("3. Soy Empleado");
-	        System.out.println("4. Salir");
-	        System.out.print("Ingrese una opción numérica: ");
+		setSize(500, 500);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		setLocationRelativeTo(null);
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.insets = new Insets(5, 5, 5, 5); // Márgenes entre botones
 
-	        int choice = scanner.nextInt();
-	        scanner.nextLine(); // Consume newline
-	        Cliente newCliente = null;
-	        
-	        if(choice == 1) {
-	        	System.out.println("1. Iniciar sesión ");
-	            System.out.println("2. Registrarse" );
-	            System.out.println("Ingrese una opción numérica: ");
-	            int choice1 = scanner.nextInt();
-	            scanner.nextLine();
-	            
-	            if (choice1 == 1) {
-	            	newCliente = validacionCliente(scanner);
-	            	mostrarMenuCliente(scanner, newCliente);
-	            } else if (choice1 == 2) {
-	            	System.out.print("Ingrese su nombre de usuario: ");
-	                String clienteUsername = scanner.nextLine();
-	                System.out.print("Ingrese su contraseña: ");
-	                String clientePassword = scanner.nextLine();
-	                
-	                addUsuarioYContraseña(clienteUsername, clientePassword);
-	                escribirUsuarioContrasena(clienteUsername, clientePassword);
-	                newCliente = RegistarCliente(scanner, clienteUsername, clientePassword);
-	                System.out.println("Registro exitoso.");
-	                mostrarMenuCliente(scanner, newCliente);
-	            }else {
-	            	System.out.print("Ingrese una opción válida");
-	            }
-	        }else if (choice == 2){
-	        	menuAdministrador();
-	        }else if (choice == 3) {
-	        	validacionEmpleado(scanner);
-	        }else if(choice == 4) {
-	        	continuar = false;
-	        }else {
-	        	System.out.print("Ingrese una opción válida");
-	        }
-		}
+        JButton botonCliente = new JButton("Soy Cliente");
+        JButton botonAdminGeneral = new JButton("Soy Administrador General");
+        JButton botonEmpleado = new JButton("Soy Empleado");
+        JButton botonSalir = new JButton("Salir");
+
+        add(botonCliente, gbc);
+        add(botonAdminGeneral, gbc);
+        add(botonEmpleado, gbc);
+        add(botonSalir, gbc);
+        
+        botonCliente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	dispose();
+        		setTitle("Iniciar Sesion ");
+        		setDefaultCloseOperation(EXIT_ON_CLOSE);
+        		setLocationRelativeTo(null);
+        		
+        		JPanel myPanel = new JPanel(new GridLayout(3, 2));
+        		
+        		getContentPane().add(myPanel);
+                myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
+                JTextField usuario = new JTextField();
+            	JTextField contrasenia = new JTextField();
+        		 myPanel.add(new JLabel("Ingrese su nombre de usuario"));
+        		 myPanel.add(usuario);
+        		 myPanel.add(new JLabel("Ingrese su contraseña"));
+        		 myPanel.add(contrasenia);
+        		 JButton registrarse = new JButton("¿No tienes cuenta? Registrate aquí");
+        		 myPanel.add(registrarse);
+        		 int result = JOptionPane.showConfirmDialog(null, myPanel,
+        	                "Ingrese los datos de inicio de sesion", JOptionPane.OK_CANCEL_OPTION);
+        		 if (result == JOptionPane.OK_OPTION) {
+        	            String usuarioTexto = usuario.getText();
+        	            String contraseniaTexto = contrasenia.getText();
+        	            //Cliente newCliente = validacionCliente()
+        		 }
+        		 registrarse.addActionListener(new ActionListener() {
+        			 @Override
+        			 public void actionPerformed(ActionEvent e) {
+        		         validacionAdminGeneral();
+        		     }
+
+        		 });
+        	 
+                 setVisible(true);
+        	}
+        	private void opcion1AdminGeneral() {
+        		 
+        	}
+        });
+        botonAdminGeneral.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuAdminGeneral();
+            }
+         });
+        setVisible(true);
 	}
+    
     
     //CLIENTE//
     /**
@@ -1387,54 +1433,54 @@ public class VehiculoRentalSystem {
      * @param scanner Objeto Scanner para la entrada del usuario.
      * @return Objeto Cliente si se autentica correctamente, o null si falla la autenticación.
      */
-    public  Cliente validacionCliente(Scanner scanner) {
-		// Menú para el cliente
-		Cliente newCliente = null;
-        String clienteUsername;
-        String clientePassword;
-        boolean clienteAutenticado = false;
-        
-        while (!clienteAutenticado) {
-            System.out.print("Ingrese su nombre de usuario: ");
-            clienteUsername = scanner.nextLine();
-            System.out.print("Ingrese su contraseña: ");
-            clientePassword = scanner.nextLine();
-            
-            // Verificar si el usuario ya existe en el mapa
-            if (usuariosYContraseñas.containsKey(clienteUsername)) {
-                // Verificar si la contraseña coincide
-                if (usuariosYContraseñas.get(clienteUsername).equals(clientePassword)) {
-                	for (Cliente cliente : clientes.values()) {
-                		if (cliente.getLogin().equals(clienteUsername)) {
-                			newCliente = cliente;
-                		}
-                	}
-                    clienteAutenticado = true;
-                } else {
-                    System.out.println("Contraseña incorrecta. Inténtelo de nuevo.");
-                }
-            } else {
-                // El usuario no existe en el mapa, permitir registro
-                System.out.println("El usuario no existe. Desea registrarse (Y/N): ");
-                String registrar = scanner.nextLine();
-                if (registrar.equalsIgnoreCase("Y")) {
-                	
-                	System.out.print("nombre de usuario: ");
-                    clienteUsername = scanner.nextLine();
-                    System.out.print("contraseña: ");
-                    clientePassword = scanner.nextLine();
-                    newCliente = RegistarCliente(scanner, clienteUsername, clientePassword);
-                    addUsuarioYContraseña(clienteUsername, clientePassword);
-                    System.out.print(clienteUsername + clientePassword);
-                    escribirUsuarioContrasena(clienteUsername, clientePassword);
-                    
-                    System.out.println("Registro exitoso.");
-                    clienteAutenticado = true;
-                }
-            }
-        }
-        return newCliente;
-	}
+    public  Cliente validacionCliente(String clienteUsername, String clientePassword) {
+ 		// Menú para el cliente
+ 		Cliente newCliente = null;
+         boolean clienteAutenticado = false;
+         
+         while (!clienteAutenticado) {
+             
+             // Verificar si el usuario ya existe en el mapa
+             if (usuariosYContraseñas.containsKey(clienteUsername)) {
+                 // Verificar si la contraseña coincide
+                 if (usuariosYContraseñas.get(clienteUsername).equals(clientePassword)) {
+                 	for (Cliente cliente : clientes.values()) {
+                 		if (cliente.getLogin().equals(clienteUsername)) {
+                 			newCliente = cliente;
+                 		}
+                 	}
+                     clienteAutenticado = true;
+                 } else {
+                     System.out.println("Contraseña incorrecta. Inténtelo de nuevo.");
+                 }
+             } else {
+                 // El usuario no existe en el mapa, permitir registro
+             	dispose();
+         		setTitle("Registrarse ");
+         		setDefaultCloseOperation(EXIT_ON_CLOSE);
+         		setLocationRelativeTo(null);
+         		
+         		JPanel myPanel = new JPanel(new GridLayout(3, 2));
+         		
+         		getContentPane().add(myPanel);
+                 myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
+                 JTextField usuario = new JTextField();
+             	JTextField contrasenia = new JTextField();
+         		 myPanel.add(new JLabel("Ingrese su nombre de usuario"));
+         		 myPanel.add(usuario);
+         		 myPanel.add(new JLabel("Ingrese su contraseña"));
+         		 myPanel.add(contrasenia);
+         		 int result = JOptionPane.showConfirmDialog(null, myPanel,
+         	                "Ingrese los datos de inicio de sesion", JOptionPane.OK_CANCEL_OPTION);
+         		 if (result == JOptionPane.OK_OPTION) {
+      	            String usuarioTexto = usuario.getText();
+      	            String contraseniaTexto = contrasenia.getText();
+      	            //newCliente = RegistarCliente(usuarioTexto,contraseniaTexto);
+      		 }        		 
+             }
+         }
+         return newCliente;
+ 	}
 	
 	//EMPLEADO//
     /**
@@ -1661,7 +1707,7 @@ public class VehiculoRentalSystem {
 		    scanner.nextLine(); // Consume newline
 		    
 		    if(choice == 1){
-		    	validacionAdminGeneral(scanner);
+		    	validacionAdminGeneral();
 		    }else if(choice == 2) {
 		    	System.out.println("========= Elija una sede =========");
 			    System.out.println("1. Sucursal Central");
@@ -1841,151 +1887,161 @@ public class VehiculoRentalSystem {
 	 * 
 	 * @param scanner El objeto Scanner para la entrada de usuario.
 	 */
-	public void menuAdminGeneral(Scanner scanner) {
-		Boolean continuar = true;
-		while (continuar) {
-		    System.out.println("========= Menú Administrador =========");
-		    System.out.println("1. Agregar carro");
-		    System.out.println("2. Eliminar carro");
-		    System.out.println("3.Consultar información vehículo");
-		    System.out.println("4. Ver lista completa de carros");
-		    System.out.println("5. Configurar seguros");
-		    System.out.println("6, Configurar precio categorías");
-		    System.out.println("7. Salir al menú principal");
-		    System.out.print("Ingrese una opción numérica: ");
-		
-		    int choice = scanner.nextInt();
-		    scanner.nextLine(); // Consume newline
-		
-		    
-		    if (choice == 1) {
-		        opcion1AdminGeneral(scanner);
-		        
-		    } else if (choice == 2) {
-		    	opcion2AdminGeneral(scanner);
-		    
-		    }else if (choice == 3) {
-		        System.out.print("Ingrese el ID (placa) del vehículo que desea consultar: ");
-		        String vehiculoID = scanner.nextLine();
-		        consultarVehiculo(vehiculoID);
-		    } else if (choice == 4) {
-		         // Ver lista completa de carros
-		         System.out.println("Lista completa de carros:");
-		         for (Vehiculo vehiculo : cars) {
-		        	 System.out.println(vehiculo.getVehiculoId() + ": " + vehiculo.getmarca() + " " + vehiculo.getmodelo());
-		            }
-		        
-		    } else if (choice == 5) {
-		    	System.out.println("Cual seguro desea modificar:");
-		    	System.out.println("1. Seguro Bajo");
-		    	System.out.println("2. Seguro Medio");
-		    	System.out.println("3. Seguro Alto");
-		    	System.out.print("Ingrese una opción numérica: ");
-				
-			    int opcionSeguro = scanner.nextInt();
-			    scanner.nextLine(); // Consume newline
-			    
-			    if(opcionSeguro == 1) {
-			    	opcion5AdminGeneral(scanner, "Seguro Bajo");
-			    }else if (opcionSeguro == 2) {
-			    	opcion5AdminGeneral(scanner, "Seguro Medio");
-			    }else if(opcionSeguro == 3) {
-			    	opcion5AdminGeneral(scanner, "Seguro Alto");
-			    }else {
-			    	System.out.println("Opción no válida. Ingrese otra opción.");
-			    }}
-			    
-			  else if (choice == 6) {
-				  System.out.println("¿Cuál categoría desea modificar?");
-				  System.out.println("1. SUV");
-				  System.out.println("2. Pequeño");
-				  System.out.println("3. Lujoso");
-				  System.out.println("4. Van");
-				  
-				  System.out.print("Ingrese una opción numérica: ");
-				  int opcionCateg = scanner.nextInt();
-				  scanner.nextLine();
-				  
-				  if(opcionCateg ==1) {
-					  opcion6AdminGeneral(scanner, "SUV");
-				  }
-				  else if(opcionCateg==2) {
-					  opcion6AdminGeneral(scanner, "pequeño");
-				  }
-			  
-				  else if(opcionCateg==3) {
-					  opcion6AdminGeneral(scanner, "lujoso");
-				  }
-				  else if(opcionCateg==4) {
-					  opcion6AdminGeneral(scanner, "van");
-				  }
-				  else {
-					  System.out.println("Opción no válida. Ingrese otra opción.");
-				  }}
-		    
-
-		       else if(choice == 7) {
-		    	continuar = false;
-		    	
-		    } else {
-		        System.out.println("Opción no válida. Ingrese otra opción.");
-		    }}
-		}
-		
-		
 	
+	public void menuAdminGeneral() {
+	    if (validacionAdminGeneral()) {
+	        setTitle("Interfaz Administrador General");
+	        setSize(300, 300);
+	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	        // Limpiar el contenido del contenedor antes de agregar nuevos elementos
+	        getContentPane().removeAll();
+
+	        JPanel menuPanel = new JPanel();
+	        menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+
+	        JButton agregarCarroButton = new JButton("Agregar Carro");
+	        JButton eliminarCarroButton = new JButton("Eliminar Carro");
+	        JButton verificarInfoVehiculoButton = new JButton("Verificar Información de Vehículo");
+	        JButton configurarSegurosButton = new JButton("Configurar Seguros");
+	        JButton configurarPrecioCategoriasButton = new JButton("Configurar Precio Categorías");
+	        JButton salirButton = new JButton("Salir al Menú Principal");
+
+	        menuPanel.add(agregarCarroButton);
+	        menuPanel.add(eliminarCarroButton);
+	        menuPanel.add(verificarInfoVehiculoButton);
+	        menuPanel.add(configurarSegurosButton);
+	        menuPanel.add(configurarPrecioCategoriasButton);
+	        menuPanel.add(salirButton);
+
+	        agregarCarroButton.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                opcion1AdminGeneral();
+	            }
+	        });
+
+	        eliminarCarroButton.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                opcion2AdminGeneral();
+	            }
+	        });
+
+	        verificarInfoVehiculoButton.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                String vehiculoID = JOptionPane.showInputDialog("Ingrese el ID (placa) del vehículo que desea consultar:");
+	                if (vehiculoID != null) {
+	                    // Llamar al nuevo método que maneja la consulta y muestra la información
+	                    //consultarVehiculoEnInterfaz(vehiculoID);
+	                }
+	            }
+	        });
+
+	        configurarSegurosButton.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                String[] seguros = {"Seguro Bajo", "Seguro Medio", "Seguro Alto"};
+	                JComboBox<String> seguroComboBox = new JComboBox<>(seguros);
+
+	                JPanel myPanel = new JPanel(new GridLayout(2, 2));
+	                myPanel.add(new JLabel("Seleccione el seguro:"));
+	                myPanel.add(seguroComboBox);
+
+	                int result = JOptionPane.showConfirmDialog(null, myPanel,
+	                        "Seleccione el seguro", JOptionPane.OK_CANCEL_OPTION);
+
+	                if (result == JOptionPane.OK_OPTION) {
+	                    String selectedSeguro = (String) seguroComboBox.getSelectedItem();
+	                    opcion5AdminGeneral(selectedSeguro);
+	                }
+	            }
+	        });
+
+	        salirButton.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                System.exit(0);
+	            }
+	        });
+
+	        // Agregar directamente el panel de menú al JFrame
+	        add(menuPanel);
+
+	        // Validar y refrescar
+	        revalidate();
+	        repaint();
+
+	        setLocationRelativeTo(null);
+	        setVisible(true);
+	    }
+	}
+
 	/**
-	 * Permite al administrador general agregar un nuevo carro al sistema.
+	 * Permite al administrador general configurar el precio de un seguro específico.
 	 *
 	 * @param scanner El objeto Scanner para la entrada de usuario.
+	 * @param seguro  El nombre del seguro que se desea configurar.
 	 */
-	public void opcion1AdminGeneral(Scanner scanner) {
-		// Agregar carro
-        System.out.print("Ingrese la placa del carro: ");
-        String vehiculoID = scanner.nextLine();
-        System.out.print("Ingrese la marca: ");
-        String marca = scanner.nextLine();
-        System.out.print("Ingrese el modelo: ");
-        String modelo = scanner.nextLine();
-        
-        System.out.print("Ingrese la categoría (SUV, pequeño, lujoso, van): ");
-        String categoria = scanner.nextLine();
-        
-        System.out.print("Ingrese la capacidad que tiene el vehículo: ");
-        int capacidad = scanner.nextInt();
+	private void opcion1AdminGeneral() {
+        JTextField vehiculoIDField = new JTextField();
+        JTextField marcaField = new JTextField();
+        JTextField modeloField = new JTextField();
+        String[] categorias = {"SUV", "Pequeño", "Lujoso", "Van"};
+        JComboBox<String> categoriaComboBox = new JComboBox<>(categorias);
+        JTextField capacidadField = new JTextField();
+        JTextField colorField = new JTextField();
+        JTextField transmisionField = new JTextField();
+        String[] sedes = {"Sucursal Central", "Sucursal Norte", "Sucursal Sur"};
+        JComboBox<String> sedeComboBox = new JComboBox<>(sedes);
 
-        // Consumir la nueva línea pendiente
-        scanner.nextLine();
+        JPanel myPanel = new JPanel(new GridLayout(8, 2));
+        myPanel.add(new JLabel("Placa del carro:"));
+        myPanel.add(vehiculoIDField);
+        myPanel.add(new JLabel("Marca:"));
+        myPanel.add(marcaField);
+        myPanel.add(new JLabel("Modelo:"));
+        myPanel.add(modeloField);
+        myPanel.add(new JLabel("Categoría:"));
+        myPanel.add(categoriaComboBox);
+        myPanel.add(new JLabel("Capacidad:"));
+        myPanel.add(capacidadField);
+        myPanel.add(new JLabel("Color:"));
+        myPanel.add(colorField);
+        myPanel.add(new JLabel("Transmisión:"));
+        myPanel.add(transmisionField);
+        myPanel.add(new JLabel("Sede:"));
+        myPanel.add(sedeComboBox);
 
-        System.out.print("Ingrese el color del vehículo: ");
-        String color = scanner.nextLine();
-        System.out.print("Ingrese la transmisión: ");
-        String transmision = scanner.nextLine();
-        
-        System.out.println("Ingrese el nombre de la sede del vehículo: ");
-        System.out.println("1. Sucursal Central: ");
-        System.out.println("2. Sucursal Norte: ");
-        System.out.println("3. Sucursal Sur: ");
-        System.out.println("Escriba la sede tal cual aparece en las opciones: ");
-        String sedeInput = scanner.nextLine();
-        Sede sede = sedes.get(sedeInput);
-        String ubicacion = sede.getNombre();
-     
-        Vehiculo newCar = new Vehiculo(vehiculoID, marca, modelo, categoria, color,transmision, capacidad, ubicacion);
-        addVehiculo(newCar);
-        escribirVehiculo(newCar);
-        System.out.println("Carro agregado con éxito a la sede "+ sede.getNombre());
-	}
+        int result = JOptionPane.showConfirmDialog(null, myPanel,
+                "Ingrese los datos del nuevo carro", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String vehiculoID = vehiculoIDField.getText();
+            String marca = marcaField.getText();
+            String modelo = modeloField.getText();
+            String categoria = (String) categoriaComboBox.getSelectedItem();
+            int capacidad = Integer.parseInt(capacidadField.getText());
+            String color = colorField.getText();
+            String transmision = transmisionField.getText();
+            String sede = (String) sedeComboBox.getSelectedItem();
+
+            Vehiculo newCar = new Vehiculo(vehiculoID, marca, modelo, categoria, color, transmision, capacidad, sede);
+            addVehiculo(newCar);
+            escribirVehiculo(newCar);
+            JOptionPane.showMessageDialog(null, "Carro agregado con éxito a la sede " + sede);
+        }
+    }
 	
 	/**
 	 * Permite al administrador general eliminar un carro del sistema.
 	 *
 	 * @param scanner El objeto Scanner para la entrada de usuario.
 	 */
-	public void opcion2AdminGeneral(Scanner scanner) {
-		// Eliminar carro
-        System.out.print("Ingrese el ID (Placa) del carro que desea eliminar: ");
-        String carId = scanner.nextLine();
+    public void opcion2AdminGeneral() {
+        // Eliminar carro
+        String carId = JOptionPane.showInputDialog("Ingrese el ID (Placa) del carro que desea eliminar:");
 
         Vehiculo carToDelete = null;
         for (Vehiculo car : cars) {
@@ -1998,71 +2054,85 @@ public class VehiculoRentalSystem {
         if (carToDelete != null) {
             removeVehiculo(carToDelete);
             eliminarVehiculo(carToDelete);
-            sedes.get(carToDelete.getUbicacion()).eliminarVehiculo(carToDelete);
-            System.out.println("Carro eliminado con éxito.");
+            JOptionPane.showMessageDialog(null, "Carro eliminado con éxito.");
         } else {
-            System.out.println("ID inválido o carro no encontrado.");
+            JOptionPane.showMessageDialog(null, "ID inválido o carro no encontrado.");
         }
-	}
+    }
+
 	
-	/**
-	 * Permite al administrador general configurar el precio de un seguro específico.
-	 *
-	 * @param scanner El objeto Scanner para la entrada de usuario.
-	 * @param seguro  El nombre del seguro que se desea configurar.
-	 */
-	public void opcion5AdminGeneral(Scanner scanner, String seguro) {
-		System.out.println("Escriba el nuevo precio del seguro: ");
-    	int nuevoPrecio = scanner.nextInt();
-    	
-    	for(Seguro seg : segurosDisponibles) {
-    		if(seg.getNombre().equals(seguro)) {
-    			seg.SetCostoPorDia(nuevoPrecio);
-    			modificarSeguro(seg, nuevoPrecio);
-    		}
-    	}
-	}
-	
-	public void opcion6AdminGeneral(Scanner scanner, String categoria) {
-		System.out.println("Escriba el nuevo precio de la categoría: ");
-		int nuevoPrecio = scanner.nextInt();
-		for (Map.Entry<String, Categoria> entry : categorias.entrySet()) {
-			String nombreCategoria = entry.getKey();
-        	Categoria cat = entry.getValue();
-        	
-        	if( nombreCategoria.equals(categoria)) {
-        		//cat.
-        	}
-    	}
-		
-	}
+    private void opcion5AdminGeneral(String nombreSeguro) {
+        System.out.println("Opción 5: Configurando seguro: " + nombreSeguro);
+
+        String nuevoPrecioStr = JOptionPane.showInputDialog("Escriba el nuevo precio del seguro " + nombreSeguro + ":");
+
+        try {
+            double nuevoPrecio = Double.parseDouble(nuevoPrecioStr);
+            for (Seguro seg : segurosDisponibles) {
+                if (seg.getNombre().equals(nombreSeguro)) {
+                    seg.SetCostoPorDia(nuevoPrecio);
+                    modificarSeguro(seg, nuevoPrecio);
+                    JOptionPane.showMessageDialog(null, "Precio del seguro actualizado con éxito.");
+                    System.out.println("Precio del seguro actualizado con éxito.");
+                    return;
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Seguro no encontrado.");
+            System.out.println("Seguro no encontrado.");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Ingrese un valor numérico válido para el nuevo precio.");
+            System.out.println("Error: Ingrese un valor numérico válido para el nuevo precio.");
+        }
+    }
 	
 	/**
 	 * Realiza la validación y autenticación del administrador general.
 	 *
 	 * @param scanner El objeto Scanner para la entrada de usuario.
 	 */
-	public  void validacionAdminGeneral(Scanner scanner) {
-		final String ADMIN_USERNAME = "admiG";
-        final String ADMIN_PASSWORD = "admiG";
-		
-        boolean acceso = true;
-		// Autenticación del administrador
-        while(acceso) {
-	        System.out.print("Ingrese el nombre de usuario del administrador: ");
-	        String adminUsername = scanner.nextLine();
-	        System.out.print("Ingrese la contraseña del administrador: ");
-	        String adminPassword = scanner.nextLine();
-	
-	        if (adminUsername.equals(ADMIN_USERNAME) && adminPassword.equals(ADMIN_PASSWORD)) {
-	            // Si las credenciales son correctas, mostrar el menú del administrador
-	            menuAdminGeneral(scanner);
-	            acceso = false;
-	        } else {
-	            System.out.println("Nombre de usuario o contraseña incorrectos. Acceso denegado.");
+	  private boolean validacionAdminGeneral() {
+	        final String ADMIN_USERNAME = "admiG";
+	        final String ADMIN_PASSWORD = "admiG";
+
+	        // Autenticación del administrador
+	        while (true) {
+	            String adminUsername = JOptionPane.showInputDialog("Ingrese el nombre de usuario del administrador:");
+	            String adminPassword = JOptionPane.showInputDialog("Ingrese la contraseña del administrador:");
+
+	            if (adminUsername != null && adminPassword != null &&
+	                    adminUsername.equals(ADMIN_USERNAME) && adminPassword.equals(ADMIN_PASSWORD)) {
+	                // Si las credenciales son correctas, retorna true para mostrar el menú
+	                return true;
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña incorrectos. Acceso denegado.");
+	            }
 	        }
-        }
-	}
+	    }
+	
+	 private Image getCustomImage() {
+	        // Cargar tu imagen personalizada (ajusta la ruta según la ubicación de tu imagen)
+	        try {
+	            return ImageIO.read(new File("InventarioDatos/image.png"));
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
+	    
+	    private Image getCustomIcon() {
+	        // Cargar tu imagen personalizada (ajusta la ruta según la ubicación de tu imagen)
+	        try {
+	       
+	            BufferedImage image = ImageIO.read(new File("InventarioDatos/image.png"));
+	            return image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
+	    private Image getScaledImage(Image image, int width, int height) {
+	        return image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+	    }
 	
 	
 

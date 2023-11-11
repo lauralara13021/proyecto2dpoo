@@ -21,8 +21,6 @@ public class Main {
 	 * Método que inicia la aplicación al crear una instancia de la clase 'Inventario' y ejecutar su método 'aplicacion'.
 	 */
 	public void Ejecutar() {
-		VentanaInicial inicio = new VentanaInicial();
-		inicio.setVisible(true);
 		Inventario inventario = new Inventario();
 		inventario.aplicacion();
 	}

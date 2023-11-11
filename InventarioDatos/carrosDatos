@@ -1,4 +1,3 @@
-XYZ789,Honda,Civic,pequeño,Plateado,Manual,4,Sucursal Norte
 DEF456,Ford,Explorer,SUV,Negro,Automático,7,Sucursal Sur
 GHI789,Chevrolet,Camaro,lujoso,Rojo,Automático,2,Sucursal Sur
 JKL321,Audi,A3,pequeño,Blanco,Automático,4,Sucursal Sur
@@ -16,5 +15,6 @@ QRS987,Jeep,Grand Cherokee,SUV,Blanco,Automático,5,Sucursal Central
 TUV321,Ford,Fiesta,pequeño,Rojo,Manual,4,Sucursal Norte
 VWX987,BMW,7 Series,lujoso,Plata,Automático,5,Sucursal Sur
 YZA321,Toyota,Sienna,van,Azul,Automático,7,Sucursal Central
-BCD987,Mazda,CX-5,SUV,Gris,Automático,5,Sucursal Norte
 
+
+hola,hola,hola,SUV,hola,hola,2,Sucursal Central

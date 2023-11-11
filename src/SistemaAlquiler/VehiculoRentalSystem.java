@@ -1894,7 +1894,7 @@ public class VehiculoRentalSystem extends JFrame{
 	        setSize(300, 300);
 	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-	        // Limpiar el contenido del contenedor antes de agregar nuevos elementos
+	       
 	        getContentPane().removeAll();
 
 	        JPanel menuPanel = new JPanel();
@@ -1933,8 +1933,7 @@ public class VehiculoRentalSystem extends JFrame{
 	            public void actionPerformed(ActionEvent e) {
 	                String vehiculoID = JOptionPane.showInputDialog("Ingrese el ID (placa) del vehículo que desea consultar:");
 	                if (vehiculoID != null) {
-	                    // Llamar al nuevo método que maneja la consulta y muestra la información
-	                    //consultarVehiculoEnInterfaz(vehiculoID);
+	                	mostrarInformacionVehiculoEnVentana(vehiculoID);
 	                }
 	            }
 	        });
@@ -1977,6 +1976,7 @@ public class VehiculoRentalSystem extends JFrame{
 	        setVisible(true);
 	    }
 	}
+	
 
 	/**
 	 * Permite al administrador general configurar el precio de un seguro específico.
@@ -2109,31 +2109,41 @@ public class VehiculoRentalSystem extends JFrame{
 	        }
 	    }
 	
-	 private Image getCustomImage() {
-	        // Cargar tu imagen personalizada (ajusta la ruta según la ubicación de tu imagen)
-	        try {
-	            return ImageIO.read(new File("InventarioDatos/image.png"));
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return null;
-	        }
-	    }
-	    
-	    private Image getCustomIcon() {
-	        // Cargar tu imagen personalizada (ajusta la ruta según la ubicación de tu imagen)
-	        try {
-	       
-	            BufferedImage image = ImageIO.read(new File("InventarioDatos/image.png"));
-	            return image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return null;
-	        }
-	    }
-	    private Image getScaledImage(Image image, int width, int height) {
-	        return image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-	    }
-	
+	  private void mostrarInformacionVehiculoEnVentana(String vehiculoID) {
+		    Vehiculo vehiculoConsultado = null;
+
+		    // Buscar el vehículo en la lista de carros
+		    for (Vehiculo vehiculo : cars) {
+		        if (vehiculo.getVehiculoId().equals(vehiculoID)) {
+		            vehiculoConsultado = vehiculo;
+		            break;
+		        }
+		    }
+
+		    if (vehiculoConsultado != null) {
+		        StringBuilder infoVehiculo = new StringBuilder();
+		        for (AgendaCarro indisponibilidad : vehiculoConsultado.getAgendaVehiculo()) {
+		            infoVehiculo.append("El vehículo no estará disponible desde ").append(indisponibilidad.getFechaInicio()).append("\n");
+		            infoVehiculo.append("hasta ").append(indisponibilidad.getFechaFinal()).append("\n");
+		        }
+		        infoVehiculo.append("Se encuentra en la sede: ").append(vehiculoConsultado.getUbicacion()).append("\n");
+		        infoVehiculo.append("Reservas:\n");
+		        for (Reserva reserva : reservas) {
+		            if (reserva.getIdCarro().equals(vehiculoID)) {
+		                infoVehiculo.append("Reservado desde: ").append(reserva.getFechaEntrega()).append("\n");
+		                infoVehiculo.append("Reservado hasta: ").append(reserva.getFechaRetorno()).append("\n");
+		                infoVehiculo.append("Reservado por: ").append(reserva.getCliente()).append("\n");
+		                infoVehiculo.append("Estado actual de la reserva: ").append(reserva.getEstado()).append("\n");
+		                infoVehiculo.append("-------------------------------------------------------\n");
+		            }
+		        }
+
+		        // Mostrar la información en una ventana de diálogo
+		        JOptionPane.showMessageDialog(null, infoVehiculo.toString(), "Información del Vehículo", JOptionPane.INFORMATION_MESSAGE);
+		    } else {
+		        JOptionPane.showMessageDialog(null, "Vehículo no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+		    }
+		}
 	
 
 }

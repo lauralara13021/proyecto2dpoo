@@ -743,10 +743,12 @@ public class VehiculoRentalSystem extends JFrame{
             	System.out.println("El vehículo no estará disponible desde " + indisponibilidad.getFechaInicio());
             	System.out.println("hasta " + indisponibilidad.getFechaFinal());
             }
+            System.out.println("UBICACIÓN");
             System.out.println("Se encuentra en la sede: " + vehiculoConsultado.getUbicacion());
-            System.out.println("Reservas:");
+           
             for(Reserva reserva: reservas) {
             	if (reserva.getIdCarro().equals(vehiculoID)) {
+            		System.out.println("Reservas:");
             		System.out.println("Reservado desde: " + reserva.getFechaEntrega());
             		System.out.println("Reservado hasta: " + reserva.getFechaRetorno());
             		System.out.println("Reservado por: " + reserva.getCliente());
@@ -754,6 +756,7 @@ public class VehiculoRentalSystem extends JFrame{
             		System.out.println("-------------------------------------------------------");
             		
             	}
+            	else {System.out.println("El vehículo no se encuentra reservado");}
             }
             
         } else {
@@ -2125,8 +2128,17 @@ public class VehiculoRentalSystem extends JFrame{
 		        for (AgendaCarro indisponibilidad : vehiculoConsultado.getAgendaVehiculo()) {
 		            infoVehiculo.append("El vehículo no estará disponible desde ").append(indisponibilidad.getFechaInicio()).append("\n");
 		            infoVehiculo.append("hasta ").append(indisponibilidad.getFechaFinal()).append("\n");
+		            infoVehiculo.append("-------------------------------------------------------\n");
+		            infoVehiculo.append("-------------------------------------------------------\n");
 		        }
-		        infoVehiculo.append("Se encuentra en la sede: ").append(vehiculoConsultado.getUbicacion()).append("\n");
+		        infoVehiculo.append("* Se encuentra en la sede: ").append(vehiculoConsultado.getUbicacion()).append("\n");
+		        infoVehiculo.append("* Color: ").append(vehiculoConsultado.getColor()).append("\n");
+		        infoVehiculo.append("* Marca: ").append(vehiculoConsultado.getmarca()).append("\n");
+		        infoVehiculo.append("* Tipo de transmisión: ").append(vehiculoConsultado.getTipoTransmision()).append("\n");
+		        infoVehiculo.append("* Modelo: ").append(vehiculoConsultado.getmodelo()).append("\n");
+		        infoVehiculo.append("* Categoría: ").append(vehiculoConsultado.getCategoria()).append("\n");
+		        infoVehiculo.append("-------------------------------------------------------\n");
+		        infoVehiculo.append("-------------------------------------------------------\n");
 		        infoVehiculo.append("Reservas:\n");
 		        for (Reserva reserva : reservas) {
 		            if (reserva.getIdCarro().equals(vehiculoID)) {
@@ -2135,6 +2147,11 @@ public class VehiculoRentalSystem extends JFrame{
 		                infoVehiculo.append("Reservado por: ").append(reserva.getCliente()).append("\n");
 		                infoVehiculo.append("Estado actual de la reserva: ").append(reserva.getEstado()).append("\n");
 		                infoVehiculo.append("-------------------------------------------------------\n");
+		                infoVehiculo.append("-------------------------------------------------------\n");
+		            }
+		            else {
+		            	infoVehiculo.append("Este vehículo no está reservado");
+		            	
 		            }
 		        }
 

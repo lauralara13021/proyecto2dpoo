@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.FileOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.lang.Math;
@@ -61,6 +62,7 @@ public class VehiculoRentalSystem extends JFrame{
     private Map<String, List<AgendaCarro>> agendasCarros;
     private Map<String, List<String>> segurosReserva;
     private static VehiculoRentalSystem instance;
+    private List<Categoria>precioCategoria;
     
     /**
      * Constructor de la clase VehiculoRentalSystem. Inicializa las listas y mapas necesarios.
@@ -77,6 +79,7 @@ public class VehiculoRentalSystem extends JFrame{
         empleados = new ArrayList<>();
         agendasCarros = new HashMap<>();
         segurosReserva = new HashMap<>();
+        precioCategoria = new ArrayList<>();
     }
     
     public static VehiculoRentalSystem getInstance() {
@@ -238,15 +241,14 @@ public class VehiculoRentalSystem extends JFrame{
             e.printStackTrace();
         }
 	}
-    
-    public void modificarCategoria(Categoria categoria, double nuevoPrecio) {
+    public void modificarPrecioCategoria(Categoria categoria, double nuevoPrecio) {
     	try (BufferedReader reader = new BufferedReader(new FileReader("InventarioDatos/Categorias"))) {
     		String line;
     		String input = "";
     		while ((line = reader.readLine()) != null) {
-                String[] categoriaP = line.split(",");
-                if (categoria.getNombre().equals(categoriaP[0])) {
-                	input += line.replaceAll(categoriaP[1], String.valueOf(nuevoPrecio))+"\n";
+                String[] seguroInfo = line.split(",");
+                if (categoria.getNombre().equals(seguroInfo[0])) {
+                	input += line.replaceAll(seguroInfo[1], String.valueOf(nuevoPrecio))+"\n";
                 }else {
                     input += line+"\n";
                 }
@@ -339,6 +341,68 @@ public class VehiculoRentalSystem extends JFrame{
             e.printStackTrace();
         }
     }
+    
+    
+    public void modificarPreciosCategoria(String nombreCategoria, int nuevaTarifaTempAlta, int nuevaTarifaTempBaja, int nuevaTarifaConductor,int nuevoPrecioSede) {
+        List<Categoria> categorias = obtenerCategoriasDesdeArchivo();
+
+        // Buscar la categoría por nombre
+        for (Categoria categoria : categorias) {
+            if (categoria.getNombre().equals(nombreCategoria)) {
+                // Actualizar los precios
+                categoria.setTarifaTempAlta(nuevaTarifaTempAlta);
+                categoria.setTarifaTempBaja(nuevaTarifaTempBaja);
+                categoria.setValorAdicionalConductor(nuevaTarifaConductor);
+                categoria.setValorSedeDiferente(nuevoPrecioSede);
+
+                // Guardar los cambios en el archivo de texto
+                guardarCategoriasEnArchivo(categorias);
+                return;
+            }
+        }
+
+        // Si llegamos aquí, la categoría no se encontró
+        System.out.println("Categoría no encontrada.");
+    }
+
+    private void guardarCategoriasEnArchivo(List<Categoria> categorias) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("InventarioDatos/Categorias"))) {
+            for (Categoria categoria : categorias) {
+                writer.println(categoria.toStringParaArchivo());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Manejar la excepción según tus necesidades
+        }
+    }
+    private List<Categoria> obtenerCategoriasDesdeArchivo() {
+        List<Categoria> categorias = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("InventarioDatos/Categorias"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 5) {
+                    String nombre = partes[0];
+                    int tarifaTempAlta = Integer.parseInt(partes[1]);
+                    int tarifaTempBaja = Integer.parseInt(partes[2]);
+                    int valorAdicionalConductor = Integer.parseInt(partes[3]);
+                    int valorSedeDiferente = Integer.parseInt(partes[4]);
+
+                    Categoria categoria = new Categoria(nombre, tarifaTempAlta, tarifaTempBaja, valorAdicionalConductor, valorSedeDiferente);
+                    categorias.add(categoria);
+                } else {
+                    System.out.println("Formato incorrecto en línea: " + linea);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+            // Manejar la excepción según tus necesidades
+        }
+
+        return categorias;
+    }
+
     
     //Empleado
     /**
@@ -1113,6 +1177,8 @@ public class VehiculoRentalSystem extends JFrame{
     		}
     	}
     }
+    
+
     
     
     
@@ -1907,14 +1973,13 @@ public class VehiculoRentalSystem extends JFrame{
 	        JButton eliminarCarroButton = new JButton("Eliminar Carro");
 	        JButton verificarInfoVehiculoButton = new JButton("Verificar Información de Vehículo");
 	        JButton configurarSegurosButton = new JButton("Configurar Seguros");
-	        JButton configurarPrecioCategoriasButton = new JButton("Configurar Precio Categorías");
+	        JButton configurarPreciosButton = new JButton("Configurar Precios");
 	        JButton salirButton = new JButton("Salir al Menú Principal");
-
 	        menuPanel.add(agregarCarroButton);
 	        menuPanel.add(eliminarCarroButton);
 	        menuPanel.add(verificarInfoVehiculoButton);
 	        menuPanel.add(configurarSegurosButton);
-	        menuPanel.add(configurarPrecioCategoriasButton);
+	        menuPanel.add(configurarPreciosButton);
 	        menuPanel.add(salirButton);
 
 	        agregarCarroButton.addActionListener(new ActionListener() {
@@ -1960,6 +2025,52 @@ public class VehiculoRentalSystem extends JFrame{
 	                }
 	            }
 	        });
+	        
+	        configurarPreciosButton.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                String[] categorias = {"SUV", "pequeño", "lujoso", "van"};
+	                JComboBox<String> categoriaComboBox = new JComboBox<>(categorias);
+
+	                JTextField tempAltaField = new JTextField();
+	                JTextField tempBajaField = new JTextField();
+	                JTextField conductorField = new JTextField();
+	                JTextField sedeField = new JTextField();
+
+	                JPanel myPanel = new JPanel(new GridLayout(6, 4));
+	                myPanel.add(new JLabel("Seleccione la categoría:"));
+	                myPanel.add(categoriaComboBox);
+	                myPanel.add(new JLabel("Nueva tarifa temporada alta:"));
+	                myPanel.add(tempAltaField);
+	                myPanel.add(new JLabel("Nueva tarifa temporada baja:"));
+	                myPanel.add(tempBajaField);
+	                myPanel.add(new JLabel("Nueva tarifa conductor adicional:"));
+	                myPanel.add(conductorField);
+	                myPanel.add(new JLabel("Nueva tarifa recoger esta categoría en otra sede:"));
+	                myPanel.add(sedeField);
+
+	                int preciosResult = JOptionPane.showConfirmDialog(null, myPanel,
+	                        "Configurar Precios", JOptionPane.OK_CANCEL_OPTION);
+
+	                if (preciosResult == JOptionPane.OK_OPTION) {
+	                    String selectedCategoria = (String) categoriaComboBox.getSelectedItem();
+	                    try {
+	                        int nuevaTarifaTempAlta = Integer.parseInt(tempAltaField.getText());
+	                        int nuevaTarifaTempBaja = Integer.parseInt(tempBajaField.getText());
+	                        int nuevaTarifaConductor = Integer.parseInt(conductorField.getText());
+	                        int nuevaTarifaSede = Integer.parseInt(sedeField.getText());
+
+	                        // Llama al método para modificar los precios
+	                        modificarPreciosCategoria(selectedCategoria, nuevaTarifaTempAlta, nuevaTarifaTempBaja,nuevaTarifaConductor,nuevaTarifaSede);
+
+	                        JOptionPane.showMessageDialog(null, "Precios actualizados con éxito.");
+	                    } catch (NumberFormatException ex) {
+	                        JOptionPane.showMessageDialog(null, "Ingrese valores numéricos válidos.");
+	                    }
+	                }
+	            }
+	        });
+
 
 	        salirButton.addActionListener(new ActionListener() {
 	            @Override
@@ -2065,8 +2176,6 @@ public class VehiculoRentalSystem extends JFrame{
 
 	
     private void opcion5AdminGeneral(String nombreSeguro) {
-        System.out.println("Opción 5: Configurando seguro: " + nombreSeguro);
-
         String nuevoPrecioStr = JOptionPane.showInputDialog("Escriba el nuevo precio del seguro " + nombreSeguro + ":");
 
         try {
@@ -2087,7 +2196,7 @@ public class VehiculoRentalSystem extends JFrame{
             System.out.println("Error: Ingrese un valor numérico válido para el nuevo precio.");
         }
     }
-	
+
 	/**
 	 * Realiza la validación y autenticación del administrador general.
 	 *

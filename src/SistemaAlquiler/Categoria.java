@@ -118,4 +118,13 @@ public class Categoria {
 	public void setValorAdicionalConductor(int valorAdicionalConductor) {
 		this.valorAdicionalConductor = valorAdicionalConductor;
 	}
+	public String toStringParaArchivo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Nombre).append(",").append(TarifaTempAlta).append(",").append(TarifaTemBaja)
+          .append(",").append(valorAdicionalConductor).append(",").append(valorSedeDiferente);
+        return sb.toString();
+    }
+
+
+
 }
